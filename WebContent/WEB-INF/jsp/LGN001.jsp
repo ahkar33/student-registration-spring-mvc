@@ -18,8 +18,8 @@
           </div>
         </div>
         <form:form class="login-form" action="/SpringMvcStudentRegistration/login" method="post" name="confirm" modelAttribute="data">
-          <form:input type="email" placeholder="Email" value="${data.email}" path="email"/>
-          <form:input type="password" placeholder="Password" value="${data.password}" path="password"/>
+          <form:input type="email" placeholder="Email" value="${data.email}" path="email" required="required"/>
+          <form:input type="password" placeholder="Password" value="${data.password}" path="password" required="required"/>
           <button>login</button>
         </form:form>
       </div>
