@@ -11,6 +11,6 @@ http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 </servlet>
 <servlet-mapping>
 <servlet-name>student</servlet-name>
-<url-pattern>/login</url-pattern>
+<url-pattern>/</url-pattern>
 </servlet-mapping>
 </web-app> 
