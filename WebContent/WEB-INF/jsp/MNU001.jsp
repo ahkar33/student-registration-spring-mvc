@@ -15,7 +15,7 @@
  	 <%
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 		if (session.getAttribute("userInfo") == null) {
-		response.sendRedirect("LGN001.jsp");
+		response.sendRedirect("/SpringMvcStudentRegistration/login");
 	}
 	%>  
 	<%@ include file="header.jsp"%>

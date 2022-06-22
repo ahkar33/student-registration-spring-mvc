@@ -27,7 +27,7 @@
         <div class="container">
             <div class=row>
                 <div class="col-md-5 ">
-                    <a href="/DatabaseStudentRegistration/MNU001.jsp">
+                    <a href="/SpringMvcStudentRegistration/welcome">
                         <h3>Student Registration</h3>
                     </a>
                 </div>
@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-md-1">
                     <input type="button" class="btn-basic" id="lgnout-button" value="Log Out"
-                        onclick="location.href='/DatabaseStudentRegistration/LogoutServlet'">
+                        onclick="location.href='/SpringMvcStudentRegistration/logout'">
                 </div>
             </div>
         </div>

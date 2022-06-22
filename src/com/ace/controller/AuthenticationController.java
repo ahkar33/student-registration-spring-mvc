@@ -45,6 +45,13 @@ public class AuthenticationController {
 		}
 	}
 	
+	@GetMapping("/logout")
+	public String logout(ModelMap model, HttpSession session) {
+		session.removeAttribute("userInfo");
+		session.invalidate();
+		return "redirect:/login";
+	}
+	
 	@GetMapping("/welcome")
 	public String showWelcome() {
 		return "MNU001";
