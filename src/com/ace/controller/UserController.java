@@ -48,32 +48,31 @@ public class UserController {
 			model.addAttribute("error", "Passwords do not match !!");
 			model.addAttribute("data", userBean);
 			return "USR001";
-		} else {
-			ArrayList<UserResponseDto> userList = userDao.selectAllUsers();
-			if (userDao.checkEmailExists(userBean.getEmail())) {
-				model.addAttribute("error", "Email already exists !!");
-				model.addAttribute("data", userBean);
-				return "USR001";
-			} else {
-				if (userList.size() == 0) {
-					userBean.setId("USR001");
-				} else {
-					int tempId = Integer.parseInt(userList.get(userList.size() - 1).getId().substring(3)) + 1;
-					String userId = String.format("USR%03d", tempId);
-					userBean.setId(userId);
-				}
-				UserRequestDto reqDto = new UserRequestDto();
-				reqDto.setId(userBean.getId());
-				reqDto.setEmail(userBean.getEmail());
-				reqDto.setName(userBean.getName());
-				reqDto.setPassword(userBean.getPassword());
-				reqDto.setUserRole(userBean.getUserRole());
-				userDao.insertUser(reqDto);
-				model.addAttribute("message", "Registered Succesfully !!");
-				model.addAttribute("data", new UserBean());
-				return "USR001";
-			}
 		}
+		ArrayList<UserResponseDto> userList = userDao.selectAllUsers();
+		if (userDao.checkEmailExists(userBean.getEmail())) {
+			model.addAttribute("error", "Email already exists !!");
+			model.addAttribute("data", userBean);
+			return "USR001";
+		}
+		if (userList.size() == 0) {
+			userBean.setId("USR001");
+		} else {
+			int tempId = Integer.parseInt(userList.get(userList.size() - 1).getId().substring(3)) + 1;
+			String userId = String.format("USR%03d", tempId);
+			userBean.setId(userId);
+		}
+		UserRequestDto reqDto = new UserRequestDto();
+		reqDto.setId(userBean.getId());
+		reqDto.setEmail(userBean.getEmail());
+		reqDto.setName(userBean.getName());
+		reqDto.setPassword(userBean.getPassword());
+		reqDto.setUserRole(userBean.getUserRole());
+		userDao.insertUser(reqDto);
+		model.addAttribute("message", "Registered Succesfully !!");
+		// clear the bean
+		model.addAttribute("data", new UserBean());
+		return "USR001";
 	}
 
 	@GetMapping("/updateUser/{id}")
@@ -97,51 +96,51 @@ public class UserController {
 				|| userBean.getConfirmPassword().isBlank() || userBean.getUserRole().isBlank()) {
 			model.addAttribute("error", "Fill the blank !!");
 			return "USR002";
-		} else if (!userBean.getPassword().equals(userBean.getConfirmPassword())) {
+		}
+		if (!userBean.getPassword().equals(userBean.getConfirmPassword())) {
 			model.addAttribute("error", "Passwords do not match !!");
 			return "USR002";
-		} else {
-			UserResponseDto tempDto = userDao.selectUserById(userBean.getId());
-			UserRequestDto reqDto = new UserRequestDto(userBean.getId(), userBean.getEmail(), userBean.getName(),
-					userBean.getPassword(), userBean.getUserRole());
-			if (!tempDto.getEmail().equals(userBean.getEmail())) {
-				if (userDao.checkEmailExists(userBean.getEmail())) {
-					model.addAttribute("error", "Email already exists !!");
-					return "USR002";
-				} else if (!userBean.getPassword().equals(userBean.getConfirmPassword())) {
-					model.addAttribute("error", "Passwords do not match !!");
-					return "USR002";
-				} else {
-					userDao.updateUser(reqDto);
-					if (reqDto.getEmail().equals(sessionDto.getEmail())) {
-						session.setAttribute("userInfo", reqDto);
-					}
-					ArrayList<UserResponseDto> userList = userDao.selectAllUsers();
-					req.getServletContext().setAttribute("userList", userList);
-					return "redirect:/userManagement";
-
-				}
+		}
+		UserResponseDto tempDto = userDao.selectUserById(userBean.getId());
+		UserRequestDto reqDto = new UserRequestDto(userBean.getId(), userBean.getEmail(), userBean.getName(),
+				userBean.getPassword(), userBean.getUserRole());
+		if (!tempDto.getEmail().equals(userBean.getEmail())) {
+			if (userDao.checkEmailExists(userBean.getEmail())) {
+				model.addAttribute("error", "Email already exists !!");
+				return "USR002";
+			}
+			if (!userBean.getPassword().equals(userBean.getConfirmPassword())) {
+				model.addAttribute("error", "Passwords do not match !!");
+				return "USR002";
 			}
 			userDao.updateUser(reqDto);
 			if (reqDto.getEmail().equals(sessionDto.getEmail())) {
-				UserResponseDto resDto = new UserResponseDto(userBean.getId(), userBean.getEmail(), userBean.getName(),
-						userBean.getPassword(), userBean.getUserRole());
-				session.setAttribute("userInfo", resDto);
+				session.setAttribute("userInfo", reqDto);
 			}
 			ArrayList<UserResponseDto> userList = userDao.selectAllUsers();
 			req.getServletContext().setAttribute("userList", userList);
 			return "redirect:/userManagement";
 		}
+		userDao.updateUser(reqDto);
+		if (reqDto.getEmail().equals(sessionDto.getEmail())) {
+			UserResponseDto resDto = new UserResponseDto(userBean.getId(), userBean.getEmail(), userBean.getName(),
+					userBean.getPassword(), userBean.getUserRole());
+			session.setAttribute("userInfo", resDto);
+		}
+		ArrayList<UserResponseDto> userList = userDao.selectAllUsers();
+		req.getServletContext().setAttribute("userList", userList);
+		return "redirect:/userManagement";
 	}
-	
+
 	@GetMapping("/deleteUser/{id}")
 	public String deleteUser(@PathVariable("id") String id) {
 		userDao.deleteUserById(id);
 		return "redirect:/userManagement";
 	}
-	
+
 	@GetMapping("/searchUser")
-	public String searchUser(@RequestParam("id") String searchId, @RequestParam("name") String searchName, ModelMap model) {
+	public String searchUser(@RequestParam("id") String searchId, @RequestParam("name") String searchName,
+			ModelMap model) {
 		// ")#<>(}" <- this is just random bullshit to avoid sql wildcard, not REGEX
 		String id = searchId.isBlank() ? ")#<>(}" : searchId;
 		String name = searchName.isBlank() ? ")#<>(}" : searchName;

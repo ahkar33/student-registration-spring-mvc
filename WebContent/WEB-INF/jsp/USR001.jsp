@@ -18,10 +18,10 @@
 			response.sendRedirect("/SpringMvcStudentRegistration/login");
 	}
 	%> 
-	<%@ include file="header.jsp"%>
+	<%@ include file="./layouts/header.jsp"%>
 
 	<div class="container">
-		<%@ include file="sidenav.html"%>
+		<%@ include file="./layouts/sidenav.html"%>
 		<div class="main_contents">
 			<div id="sub_content">
 				<form:form action="/SpringMvcStudentRegistration/addUser" method="post" modelAttribute="data">
@@ -117,7 +117,7 @@
 		</div>
 	</div>
 
-	<%@ include file="footer.html"%>
+	<%@ include file="./layouts/footer.html"%>
 </body>
 
 </html>
