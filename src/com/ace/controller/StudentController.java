@@ -123,14 +123,8 @@ public class StudentController {
 			model.addAttribute("data", studentBean);
 			return "STU002";
 		}
-		StudentRequestDto reqDto = new StudentRequestDto(
-									studentBean.getId(),
-									studentBean.getName(),
-									studentBean.getDob(), 
-									studentBean.getGender(),
-									studentBean.getPhone(),
-									studentBean.getEducation()
-		);
+		StudentRequestDto reqDto = new StudentRequestDto(studentBean.getId(), studentBean.getName(),
+				studentBean.getDob(), studentBean.getGender(), studentBean.getPhone(), studentBean.getEducation());
 		studentDao.updateStudent(reqDto);
 		studentDao.deleteAttendCoursesByStudentId(studentBean.getId());
 		String[] attendCourses = new String[studentBean.getAttendCourses().size()];
@@ -140,7 +134,7 @@ public class StudentController {
 		}
 		return "redirect:/studentManagement";
 	}
-	
+
 	@GetMapping("/deleteStudent/{id}")
 	public String deleteStudent(@PathVariable("id") String id) {
 		// you have to delete from transition table first and then from student table
@@ -148,5 +142,34 @@ public class StudentController {
 		studentDao.deleteStudentById(id);
 		return "redirect:/studentManagement";
 	}
-	
+
+	@GetMapping("/searchStudent")
+	public String searchStudent(@RequestParam("id") String searchId, @RequestParam("name") String searchName,
+			@RequestParam("course") String searchCourse, ModelMap model) {
+		// ")#<>(}" <- this is just random bullshit to avoid sql wildcard, not REGEX
+		String id = searchId.isBlank() ? ")#<>(}" : searchId;
+		String name = searchName.isBlank() ? ")#<>(}" : searchName;
+		String course = searchCourse.isBlank() ? ")#<>(}" : searchCourse;
+
+		ArrayList<StudentResponseDto> studentList = studentDao.selectStudentListByIdOrNameOrCourse(id, name, course);
+		ArrayList<ArrayList<CourseResponseDto>> coursesLists = new ArrayList<>();
+		for (StudentResponseDto student : studentList) {
+			ArrayList<CourseResponseDto> courseList = courseDao.selectCoursesByStudentId(student.getId());
+			coursesLists.add(courseList);
+		}
+		if (studentList.size() == 0) {
+			studentList = studentDao.selectAllStudents();
+			ArrayList<ArrayList<CourseResponseDto>> coursesList = new ArrayList<>();
+			for (StudentResponseDto student : studentList) {
+				ArrayList<CourseResponseDto> courseList = courseDao.selectCoursesByStudentId(student.getId());
+				coursesList.add(courseList);
+			}
+			model.addAttribute("studentList", studentList);
+			model.addAttribute("coursesLists", coursesList);
+			return "STU003";
+		}
+		model.addAttribute("studentList", studentList);
+		model.addAttribute("coursesLists", coursesLists);
+		return "STU003";
+	}
 }

@@ -25,7 +25,7 @@
 		<%@ include file="./layouts/sidenav.html"%>
 		<div class="main_contents">
 			<div id="sub_content">
-				<form action="SearchStudentServlet" class="row g-3 mt-3 ms-2">
+				<form action="/SpringMvcStudentRegistration/searchStudent" class="row g-3 mt-3 ms-2">
 					<div class="col-auto">
 						<label for="staticEmail2" class="visually-hidden">studentID</label>
 						<input type="text" class="form-control" id="staticEmail2"
