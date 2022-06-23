@@ -9,14 +9,14 @@
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Course Registration</title>
+<title></title>
 </head>
 
 <body>
 	<%
 		response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
 	if (session.getAttribute("userInfo") == null) {
-		response.sendRedirect("/SpringMvcStudentRegistration/login");	
+		response.sendRedirect("/SpringMvcStudentRegistration/login");
 	}
 	%>
 	<%@ include file="./layouts/header.jsp"%>
@@ -25,17 +25,26 @@
 		<%@ include file="./layouts/sidenav.html"%>
 		<div class="main_contents">
 			<div id="sub_content">
-				<form:form action="/SpringMvcStudentRegistration/addStudent" method="post" modelAttribute="data">
-					<h2 class="col-md-6 offset-md-2 mb-5 mt-4">Student
-						Registration</h2>
+				<form:form action="/SpringMvcStudentRegistration/updateStudent" method="post"
+					modelAttribute="data">
+					<h2 class="col-md-6 offset-md-2 mb-5 mt-4">Student Update</h2>
 					<h3 style="color: red; text-align: center;">${error}</h3>
 					<h3 style="color: green; text-align: center;">${message}</h3>
+					<div class="row mb-4">
+						<div class="col-md-2"></div>
+						<label for="name" class="col-md-2 col-form-label">Student
+							ID</label>
+						<div class="col-md-4">
+							<form:input type="text" class="form-control" id="name"
+								readonly="true" value="${data.id}" path="id" />
+						</div>
+					</div>
 					<div class="row mb-4">
 						<div class="col-md-2"></div>
 						<label for="name" class="col-md-2 col-form-label">Name</label>
 						<div class="col-md-4">
 							<form:input type="text" class="form-control" id="name"
-								value="${data.name}" path="name" />
+								path="name" value="${data.name}" />
 						</div>
 					</div>
 					<div class="row mb-4">
@@ -43,7 +52,7 @@
 						<label for="dob" class="col-md-2 col-form-label">DOB</label>
 						<div class="col-md-4">
 							<form:input type="date" class="form-control" id="dob"
-								value="${data.dob}" path="dob"/>
+								value="${data.dob}" path="dob" />
 						</div>
 					</div>
 					<fieldset class="row mb-4">
@@ -54,38 +63,41 @@
 								<c:when test="${empty data.gender}">
 									<div class="form-check-inline">
 										<form:radiobutton class="form-check-input" path="gender"
-											id="gridRadios1" value="Male" checked="checked"/> <label
-											class="form-check-label" for="gridRadios1"> Male </label>
+											id="gridRadios1" value="Male" checked="checked" />
+										<label class="form-check-label" for="gridRadios1">
+											Male </label>
 									</div>
 									<div class="form-check-inline">
 										<form:radiobutton class="form-check-input" path="gender"
-											id="gridRadios2" value="Female"/> <label
-											class="form-check-label" for="gridRadios2">Female</label>
+											id="gridRadios2" value="Female" />
+										<label class="form-check-label" for="gridRadios2">Female</label>
 									</div>
 								</c:when>
 								<c:otherwise>
 									<c:if test="${data.gender eq \"Male\"}">
 										<div class="form-check-inline">
 											<form:radiobutton class="form-check-input" path="gender"
-												id="gridRadios1" value="Male" checked="checked" /> <label
-												class="form-check-label" for="gridRadios1"> Male </label>
+												id="gridRadios1" value="Male" checked="checked" />
+											<label class="form-check-label" for="gridRadios1">
+												Male </label>
 										</div>
 										<div class="form-check-inline">
 											<form:radiobutton class="form-check-input" path="gender"
-												id="gridRadios2" value="Female"/> <label
-												class="form-check-label" for="gridRadios2">Female</label>
+												id="gridRadios2" value="Female" />
+											<label class="form-check-label" for="gridRadios2">Female</label>
 										</div>
 									</c:if>
 									<c:if test="${data.gender eq \"Female\"}">
 										<div class="form-check-inline">
 											<form:radiobutton class="form-check-input" path="gender"
-												id="gridRadios1" value="Male"/> <label
-												class="form-check-label" for="gridRadios1"> Male </label>
+												id="gridRadios1" value="Male" />
+											<label class="form-check-label" for="gridRadios1">
+												Male </label>
 										</div>
 										<div class="form-check-inline">
 											<form:radiobutton class="form-check-input" path="gender"
-												id="gridRadios2" value="Female" checked="checked"/> <label
-												class="form-check-label" for="gridRadios2">Female</label>
+												id="gridRadios2" value="Female" checked="checked" />
+											<label class="form-check-label" for="gridRadios2">Female</label>
 										</div>
 									</c:if>
 
@@ -99,24 +111,24 @@
 						<div class="col-md-2"></div>
 						<label for="phone" class="col-md-2 col-form-label">Phone</label>
 						<div class="col-md-4">
-							<form:input type="text" class="form-control" id="phone" path="phone"
-								value="${empty data.phone ? '+95' : data.phone}"/>
+							<form:input type="text" class="form-control" id="phone"
+								value="${empty data.phone ? '+95' : data.phone}" path="phone" />
 						</div>
 					</div>
 					<div class="row mb-4">
 						<div class="col-md-2"></div>
 						<label for="education" class="col-md-2 col-form-label">Education</label>
 						<div class="col-md-4">
-							<form:select class="form-select" aria-label="Education" id="education"
-								path="education">
+							<form:select class="form-select" aria-label="Education"
+								id="education" path="education">
 
 								<c:if test="${not empty data.education}">
 									<form:option value="${data.education}">${data.education}</form:option>
 								</c:if>
 								<c:if
 									test="${data.education != \"Bachelor of Information Technology\"}">
-									<form:option value="Bachelor of Information Technology">Bachelor
-										of Information Technology</form:option>
+									<option value="Bachelor of Information Technology">Bachelor
+										of Information Technology</option>
 								</c:if>
 								<c:if test="${data.education != \"Diploma in IT\"}">
 									<form:option value="Diploma in IT">Diploma in IT</form:option>
@@ -136,22 +148,23 @@
 						<div class="col-md-6 offset-md-4 mt-4">
 							<c:forEach var="course" items="${courseList}">
 								<div class="form-check-inline col-md-2">
-									<form:checkbox class="form-check-input" path="attendCourses" 
-										id="gridRadios1" value="${course.id}"/>
+									<form:checkbox class="form-check-input" path="attendCourses"
+										id="gridRadios1" value="${course.id}" />
 									<label class="form-check-label" for="gridRadios1">${course.name}</label>
 								</div>
 							</c:forEach>
 						</div>
-
 					</fieldset>
-
 					<div class="row mb-4">
 						<div class="col-md-4"></div>
 
 						<div class="col-md-4">
-							<input type="reset" value="Reset" class="btn btn-danger">
 							<button type="submit" class="btn btn-secondary col-md-2">
-								Add</button>
+								Update</button>
+							<button type="button" class="btn btn-danger"
+								onclick="location.href = '/SpringMvcStudentRegistration/deleteStudent/${data.id}'">
+								<span>Delete</span>
+							</button>
 							<!-- 							<div class="modal fade" id="exampleModal" tabindex="-1"
 								aria-labelledby="exampleModalLabel" aria-hidden="true">
 								<div class="modal-dialog modal-dialog-centered">

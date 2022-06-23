@@ -74,7 +74,7 @@
 											${course.name},
 										</c:forEach></td>
 									<td>
-										<a href='SeeMoreServlet?id=${student.id}'>
+										<a href='/SpringMvcStudentRegistration/seeMore?id=${student.id}'>
 											<button type="submit" class="btn btn-secondary mb-2">
 												See More
 											</button>

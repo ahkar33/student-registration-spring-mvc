@@ -19,7 +19,7 @@ public class StudentResponseDto {
 	private String phone;
 	private String education;
 	private List<String> attendCourses;
-
+	
 	public StudentResponseDto(String name, String dob, String gender, String phone, String education,
 			List<String> attendCourses) {
 		super();

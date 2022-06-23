@@ -1,6 +1,9 @@
 package com.ace.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.ace.dto.course.CourseResponseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +22,12 @@ public class StudentBean {
 	private String phone;
 	private String education;
 	private List<String> attendCourses;
-
+	
+	public void addAttendCourse(CourseResponseDto course) {
+		if(attendCourses == null) attendCourses = new ArrayList<>();
+		attendCourses.add(course.getId());
+	}
+	
 	public StudentBean(String id, String name, String dob, String gender, String phone, String education) {
 		super();
 		this.id = id;

@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ace.dao.CourseDao;
 import com.ace.dao.StudentDao;
@@ -71,7 +73,8 @@ public class StudentController {
 			String userId = String.format("STU%03d", tempId);
 			studentBean.setId(userId);
 		}
-		StudentRequestDto reqDto = new StudentRequestDto(studentBean.getName(), studentBean.getDob(), studentBean.getGender(), studentBean.getPhone(), studentBean.getEducation());
+		StudentRequestDto reqDto = new StudentRequestDto(studentBean.getName(), studentBean.getDob(),
+				studentBean.getGender(), studentBean.getPhone(), studentBean.getEducation());
 		reqDto.setId(studentBean.getId());
 		studentDao.insertStudent(reqDto);
 		String[] attendCourses = new String[studentBean.getAttendCourses().size()];
@@ -84,4 +87,66 @@ public class StudentController {
 		model.addAttribute("data", new StudentBean());
 		return "STU001";
 	}
+
+	@GetMapping("/seeMore")
+	public String seeMore(@RequestParam("id") String id, ModelMap model) {
+		StudentResponseDto studentDto = studentDao.selectStudentById(id);
+		StudentBean student = new StudentBean();
+		student.setId(studentDto.getId());
+		student.setName(studentDto.getName());
+		student.setDob(studentDto.getDob());
+		student.setGender(studentDto.getGender());
+		student.setPhone(studentDto.getPhone());
+		student.setEducation(studentDto.getEducation());
+		ArrayList<CourseResponseDto> attendCourses = courseDao.selectCoursesByStudentId(id);
+		for (CourseResponseDto course : attendCourses) {
+			student.addAttendCourse(course);
+		}
+		ArrayList<CourseResponseDto> courses = courseDao.selectAllCourses();
+		model.addAttribute("courseList", courses);
+		model.addAttribute("data", student);
+		return "STU002";
+	}
+
+	@PostMapping("/updateStudent")
+	public String updateStudent(@ModelAttribute("") StudentBean studentBean, ModelMap model) {
+		ArrayList<CourseResponseDto> courseList = courseDao.selectAllCourses();
+		model.addAttribute("courseList", courseList);
+		if (studentBean.getAttendCourses().size() == 0) {
+			model.addAttribute("error", "Fill the blank !!");
+			model.addAttribute("data", studentBean);
+			return "STU002";
+		}
+		if (studentBean.getName().isBlank() || studentBean.getDob().isBlank() || studentBean.getGender().isBlank()
+				|| studentBean.getPhone().length() < 4 || studentBean.getEducation().isBlank()) {
+			model.addAttribute("error", "Fill the blank !!");
+			model.addAttribute("data", studentBean);
+			return "STU002";
+		}
+		StudentRequestDto reqDto = new StudentRequestDto(
+									studentBean.getId(),
+									studentBean.getName(),
+									studentBean.getDob(), 
+									studentBean.getGender(),
+									studentBean.getPhone(),
+									studentBean.getEducation()
+		);
+		studentDao.updateStudent(reqDto);
+		studentDao.deleteAttendCoursesByStudentId(studentBean.getId());
+		String[] attendCourses = new String[studentBean.getAttendCourses().size()];
+		attendCourses = studentBean.getAttendCourses().toArray(attendCourses);
+		for (int i = 0; i < attendCourses.length; i++) {
+			studentDao.insertStudentCourse(attendCourses[i], studentBean.getId());
+		}
+		return "redirect:/studentManagement";
+	}
+	
+	@GetMapping("/deleteStudent/{id}")
+	public String deleteStudent(@PathVariable("id") String id) {
+		// you have to delete from transition table first and then from student table
+		studentDao.deleteAttendCoursesByStudentId(id);
+		studentDao.deleteStudentById(id);
+		return "redirect:/studentManagement";
+	}
+	
 }
